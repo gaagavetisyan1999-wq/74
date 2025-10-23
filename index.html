@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Coins - TikTok Style</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    header img { width: 32px; height: 32px; }
+
+    h1 { font-size: 26px; font-weight: 700; }
+
+    .payment-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .payment-logos img { height: 26px; object-fit: contain; }
+
+    .input-container {
+      width: 90%;
+      max-width: 400px;
+      margin-bottom: 15px;
+    }
+
+    label { font-size: 15px; display: block; margin-bottom: 6px; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .coins-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      width: 90%;
+      max-width: 400px;
+      margin-top: 10px;
+    }
+
+    .coin-option {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      text-align: center;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: all 0.15s ease-in-out;
+      cursor: pointer;
+    }
+
+    .coin-option:hover { transform: scale(1.03); border-color: #ff0050; }
+
+    .coin-option span {
+      display: block;
+      font-size: 13px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    .custom-input {
+      width: 70%;
+      border: none;
+      outline: none;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .recharge-section {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .payment-logos.bottom {
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .recharge-btn {
+      background: #ff0050;
+      color: white;
+      font-size: 18px;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .recharge-btn:hover { background: #e00046; }
+
+    /* Popup Styles */
+    .popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup-content {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      width: 85%;
+      max-width: 350px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Animated checkmark */
+    .checkmark-wrapper {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 15px;
+      position: relative;
+    }
+
+    .circle {
+      stroke: #22c55e;
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 6;
+      stroke-miterlimit: 10;
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .check {
+      transform-origin: 50% 50%;
+      stroke: #22c55e;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      stroke-width: 6;
+      animation: stroke 0.3s 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    @keyframes stroke {
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* Payment details */
+    .card-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .card-number {
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+
+    .card-box img {
+      height: 26px;
+    }
+
+    @media (max-width: 480px) {
+      .coins-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg" alt="TikTok Logo">
+    <h1>Get Coins</h1>
+  </header>
+
+  <div class="payment-logos">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="MasterCard">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Pay">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Google_Pay_Logo.svg" alt="Google Pay">
+  </div>
+
+  <div class="input-container">
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="@alex_123">
+  </div>
+
+  <div class="coins-grid" id="coinGrid"></div>
+
+  <div class="recharge-section">
+    <div class="payment-logos bottom">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="MasterCard">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Pay">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Google_Pay_Logo.svg" alt="Google Pay">
+    </div>
+    <button class="recharge-btn" id="rechargeButton">Recharge now</button>
+
+    <div class="card-box" id="cardBox">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+      <div class="card-number">**** **** **** 7586</div>
+      <button class="recharge-btn" id="confirmButton">Confirm Payment</button>
+    </div>
+  </div>
+
+  <div class="popup" id="successPopup">
+    <div class="popup-content">
+      <div class="checkmark-wrapper">
+        <svg viewBox="0 0 52 52">
+          <circle class="circle" cx="26" cy="26" r="25"/>
+          <path class="check" fill="none" d="M14 27l7 7 16-16"/>
+        </svg>
+      </div>
+      <h2>Payment Completed</h2>
+      <p>Your coins will be added soon.</p>
+    </div>
+  </div>
+
+  <script>
+    const coinGrid = document.getElementById("coinGrid");
+    const coins = [30, 350, 700, 1400, 3500, 7000, 17500, "Custom"];
+
+    coins.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "coin-option";
+      if (c === "Custom") {
+        div.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/138/138281.png" style="height:18px;margin-right:5px;vertical-align:middle;"> <input type="number" class="custom-input" id="customCoins" placeholder="Custom">`;
+      } else {
+        const price = (c * 0.012).toFixed(2);
+        div.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/138/138281.png" alt="coin" style="height:18px;vertical-align:middle;margin-right:5px;">${c} <span>$${price}</span>`;
+      }
+      coinGrid.appendChild(div);
+    });
+
+    const rechargeBtn = document.getElementById("rechargeButton");
+    const cardBox = document.getElementById("cardBox");
+    const confirmButton = document.getElementById("confirmButton");
+
+    rechargeBtn.addEventListener("click", () => {
+      cardBox.style.display = "flex";
+      rechargeBtn.style.display = "none";
+    });
+
+    confirmButton.addEventListener("click", () => {
+      cardBox.style.display = "none";
+      document.getElementById("successPopup").style.display = "flex";
+      setTimeout(() => {
+        document.getElementById("successPopup").style.display = "none";
+        rechargeBtn.style.display = "block";
+      }, 3000);
+    });
+  </script>
+
+</body>
+</html>
